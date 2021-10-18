@@ -20,17 +20,28 @@ const spacer = (text)=> {
 spacer('findEmployeeByName Moe')
 // given a name and array of employees, return employee
 const findEmployeeByName = (strName, arrEmployees) => {
-  return arrEmployees.filter((currEmployee) => {
-    if(currEmployee['name'] === strName) return currEmployee;
-  });
+  return arrEmployees.reduce((newObj, currEmployee) => {
+    if(currEmployee['name'] === strName) {
+      newObj['id'] = currEmployee['id'];
+      newObj['name'] = currEmployee['name']; 
+    }
+    return newObj;
+  }, {});
 }
 console.log(findEmployeeByName('moe', employees));//{ id: 1, name: 'moe' }
 spacer('')
 
 spacer('findManagerFor Shep Jr.')
 //given an employee and a list of employees, return the employee who is the manager
-const findManagerFor = (callBackFn, arr) => {
-
+const findManagerFor = (callBackFn, arrEmployees) => {
+  let findMgrId = arrEmployees.find((currEmployee) => {
+    if(currEmployee['name'] === callBackFn['name']) return currEmployee;
+  });
+  let resultMgr = arrEmployees.find((currEmployee) => {
+    if(currEmployee['id'] === findMgrId['managerId']) return currEmployee;
+  });
+  return resultMgr;
+  
 }
 console.log(findManagerFor(findEmployeeByName('shep Jr.', employees), employees));//{ id: 4, name: 'shep', managerId: 2 }
 spacer('')
@@ -130,7 +141,7 @@ spacer('');
 spacer('displayManagementTree')
 //given a tree of employees, generate a display which displays the hierarchy
 const displayManagementTree = (callBackFn) => {
-  
+
 }
 displayManagementTree(generateManagementTree(employees));/*
 moe
