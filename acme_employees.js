@@ -50,7 +50,10 @@ spacer('findCoworkersFor Larry')
 
 //given an employee and a list of employees, return the employees who report to the same manager
 const findCoworkersFor = (callBackFn, arr) => {
-
+  return arr.reduce((accum, currElem) => {
+    if(findManagerFor(callBackFn, arr).id === currElem.managerId && callBackFn.name !== currElem.name) accum.push(currElem);
+    return accum;
+  },[])
 }
 console.log(findCoworkersFor(findEmployeeByName('larry', employees), employees));/*
 [ { id: 3, name: 'curly', managerId: 1 },
@@ -62,7 +65,24 @@ spacer('');
 spacer('findManagementChain for moe')
 //given an employee and a list of employees, return a the management chain for that employee. The management chain starts from the employee with no manager with the passed in employees manager 
 const findManagementChainForEmployee = (callBackFn, arr) => {
+  
+  let result = [];
 
+  let currEmployeeMgrId =  arr.find((employee) => {
+    if(employee.id === callBackFn.id) return employee;
+  });
+  
+  if(!currEmployeeMgrId.managerId) return result;
+
+  result = arr.reduce((accum, currEmployee) => {
+    if(currEmployeeMgrId.managerId === currEmployee.id) {
+      accum.unshift(currEmployee);
+      currEmployeeMgrId = currEmployee;
+    }
+    return accum;
+  },[]);
+  
+  return findManagementChainForEmployee(currEmployeeMgrId, arr).concat(result);
 }
 console.log(findManagementChainForEmployee(findEmployeeByName('moe', employees), employees));//[  ]
 spacer('');
@@ -79,7 +99,11 @@ spacer('');
 spacer('generateManagementTree')
 //given a list of employees, generate a tree like structure for the employees, starting with the employee who has no manager. Each employee will have a reports property which is an array of the employees who report directly to them.
 const generateManagementTree = (arr) => {
-
+  return arr.reduce((accum, currElem) => {
+    accum.push(findManagementChainForEmployee(findEmployeeByName(currElem.name, arr), arr))
+    accum.push(currElem);
+    return accum;
+  }, {});
 }
 console.log(JSON.stringify(generateManagementTree(employees), null, 2));
 /*
