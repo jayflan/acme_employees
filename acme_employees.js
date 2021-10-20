@@ -98,12 +98,55 @@ spacer('');
 
 spacer('generateManagementTree')
 //given a list of employees, generate a tree like structure for the employees, starting with the employee who has no manager. Each employee will have a reports property which is an array of the employees who report directly to them.
-const generateManagementTree = (arr) => {
-  return arr.reduce((accum, currElem) => {
-    accum.push(findManagementChainForEmployee(findEmployeeByName(currElem.name, arr), arr))
-    accum.push(currElem);
-    return accum;
-  }, {});
+const generateManagementTree = (employees) => {
+  let result = {};
+
+  const manager = employees.find((currEmployee) => {
+    if(!currEmployee.managerId) {
+      const reportManager = currEmployee;
+      reportManager.reports = [];
+      return reportManager;
+    } 
+  });
+
+  const directReport = employees.find((currEmployee) => {
+        if(currEmployee.managerId === manager.id) {
+          const reportEmployee = currEmployee;
+          reportEmployee.reports = [];
+          return reportEmployee;
+        }
+      });
+console.log(manager);
+console.log(directReport);
+
+
+
+
+  //   let manager = employees.find((currEmployee) => !currEmployee.managerId);
+
+//   if(!manager) return result;
+
+//   manager.reports = [];
+
+//   const directReport = employees.find((currEmployee) => {
+//     if(currEmployee.managerId === manager.id) {
+//       let reportEmployee = currEmployee;
+//       reportEmployee.reports = [];
+//       return reportEmployee;
+//     }
+//   });
+
+//   manager.reports.push(directReport);
+
+//   result = manager;
+//   manager = directReport;
+
+//   // console.log(result)
+//   // console.log(manager)
+
+//   // return generateManagementTree(directReport);
+//   return result;
+  
 }
 console.log(JSON.stringify(generateManagementTree(employees), null, 2));
 /*
